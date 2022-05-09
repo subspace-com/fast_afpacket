@@ -20,10 +20,10 @@ Vagrant.configure("2") do |config|
     # define the first vm and set up a private network
     # with preconfigured IP, MAC, and ARP table entries of the
     # second vm below
-    config.vm.define "fast_afpacket-101" do |boxconfig|
+    config.vm.define "fast-afpacket-101" do |boxconfig|
         boxconfig.vm.box = "debian/buster64"
         
-        boxconfig.vm.hostname = "fast_afpacket-101"
+        boxconfig.vm.hostname = "fast-afpacket-101"
         
         boxconfig.vm.network "private_network", ip: "192.168.56.101", :mac => "0242acc80161"
         boxconfig.vm.provision :shell, run: "always", inline: "ip address replace fde4:8dba:82e1::c1/64 dev eth1"
@@ -35,10 +35,10 @@ Vagrant.configure("2") do |config|
     # define the second vm in the same private network
     # with preconfigured IP, MAC, and ARP table entries of the
     # first vm above
-    config.vm.define "fast_afpacket-102" do |boxconfig|
+    config.vm.define "fast-afpacket-102" do |boxconfig|
         boxconfig.vm.box = "debian/buster64"
         
-        boxconfig.vm.hostname = "fast_afpacket-102"
+        boxconfig.vm.hostname = "fast-afpacket-102"
         
         boxconfig.vm.network "private_network", ip: "192.168.56.102", :mac => "0242acc80162"
         boxconfig.vm.provision :shell, run: "always", inline: "ip address replace fde4:8dba:82e1::c2/64 dev eth1"
