@@ -1,5 +1,7 @@
 # fast_afpacket
 
+fast_afpacket is a golang library for sending and receiving packets using [AF_PACKET](https://man7.org/linux/man-pages/man7/packet.7.html) sockets. It's built around [mdlayher/socket](https://github.com/mdlayher/socket). The library also fully supports [linux socket timestamp options](https://www.kernel.org/doc/html/latest/networking/timestamping.html), setting the correct ioctls and socket options automatically, and includes APIs for retrieving RX/TX timestamps back from the socket.
+
 ## Example App
 
 For convenience there is an example service which acts as a client and server to
@@ -22,12 +24,12 @@ Bringing machine 'fast_afpacket-102' up with 'virtualbox' provider...
 ...
 ==> fast_afpacket-101: Machine 'fast_afpacket-101' has a post `vagrant up` message. This is a message
 ==> fast_afpacket-101: from the creator of the Vagrantfile, and not from Vagrant itself:
-==> fast_afpacket-101: 
+==> fast_afpacket-101:
 ==> fast_afpacket-101: Vanilla Debian box. See https://app.vagrantup.com/debian for help and bug reports
 
 ==> fast_afpacket-102: Machine 'fast_afpacket-102' has a post `vagrant up` message. This is a message
 ==> fast_afpacket-102: from the creator of the Vagrantfile, and not from Vagrant itself:
-==> fast_afpacket-102: 
+==> fast_afpacket-102:
 ==> fast_afpacket-102: Vanilla Debian box. See https://app.vagrantup.com/debian for help and bug reports
 
 >  vagrant status
