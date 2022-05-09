@@ -1,4 +1,4 @@
-# fast_-_afpacket
+# fast_afpacket
 
 fast_afpacket is a Go library for sending and receiving packets using
 [AF_PACKET](https://man7.org/linux/man-pages/man7/packet.7.html) sockets. It's
