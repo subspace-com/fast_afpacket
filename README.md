@@ -126,3 +126,8 @@ any hardware timestamps. You will only see software timestamps which is the
 kernel setting the timestamp on the packet. In order to get real hardware
 timestamps you will need to use the library on bare metal hardware with NICs which
 support hardware timestamping.
+
+
+### Authors
+
+fast_afpacket was designed and authored by [Blain Smith](https://github.com/blainsmith) and [Joe williams](https://github.com/joewilliams) at [Subspace](https://subspace.com/).
