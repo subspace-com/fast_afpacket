@@ -45,7 +45,7 @@ func TestParseTimestamps(t *testing.T) {
 
 		msg := unix.SocketControlMessage{
 			Header: unix.Cmsghdr{
-				Level: unix.SOL_LOCAL,
+				Level: unix.SOL_XDP,
 			},
 		}
 

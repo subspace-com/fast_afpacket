@@ -20,7 +20,6 @@ func (c *Conn) recvTimestamps(b []byte, flag int) (int, net.Addr, SocketTimestam
 	conn := c.r
 	if flag == MsgErrQueue {
 		conn = c.s
-		fmt.Println("sender conn")
 	}
 
 	n, oobn, _, sa, err := conn.Recvmsg(b, oob, flag)
