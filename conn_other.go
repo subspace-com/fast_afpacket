@@ -18,6 +18,7 @@ func (c *Conn) recvTimestamps(_ []byte, _ int) (int, net.Addr, SocketTimestamps,
 func (c *Conn) readFrom(_ []byte) (int, net.Addr, error)  { return 0, nil, errNotSupported }
 func (c *Conn) writeTo(_ []byte, _ net.Addr) (int, error) { return 0, errNotSupported }
 func (c *Conn) setBPF(_ []bpf.RawInstruction) error       { return errNotSupported }
+func (c *Conn) stats() (*Stats, error)                   { return nil, errNotSupported }
 
 func Listen(iface *net.Interface, socketType int, socketProtocol int, config *Config) (*Conn, error) {
 	return nil, errNotSupported

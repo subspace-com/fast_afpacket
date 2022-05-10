@@ -23,6 +23,10 @@ var (
 	ProbeBypassPrefix = []byte{0x93, 0x72, 0xe7, 0x59, 0xc7, 0xb5, 0xaa, 0x73}
 
 	ProbeID uint64
+
+	Drops            uint32
+	Packets          uint32
+	FreezeQueueCount uint32
 )
 
 func main() {
@@ -66,6 +70,8 @@ func main() {
 	}
 
 	config := fastafpacket.Config{
+		DualConn: true,
+
 		Filter: allInstructions,
 	}
 
@@ -137,6 +143,30 @@ func main() {
 					"software":     ts.Software.UTC().Format(time.RFC3339Nano),
 					"delay":        ts.Software.Sub(recvTime),
 				}).Println("RX Recvmsg")
+			}
+		}()
+	}
+
+	{
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			defer ticker.Stop()
+
+			for range ticker.C {
+				stats, err := conn.Stats()
+				if err != nil {
+					logrus.Warnln(err)
+				}
+
+				Drops += stats.Drops
+				Packets += stats.Packets
+				FreezeQueueCount += stats.FreezeQueueCount
+
+				logrus.WithFields(logrus.Fields{
+					"drops":         Drops,
+					"packets":       Packets,
+					"queue_freezes": FreezeQueueCount,
+				}).Println("RX Stats")
 			}
 		}()
 	}

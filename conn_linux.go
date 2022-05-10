@@ -62,6 +62,27 @@ func (c *Conn) setBPF(filter []bpf.RawInstruction) error {
 	return c.r.SetBPF(filter)
 }
 
+func (c *Conn) stats() (*Stats, error) {
+	if stats, err := c.r.GetSockoptTpacketStatsV3(unix.SOL_PACKET, unix.PACKET_STATISTICS); err == nil {
+		return &Stats{
+			Packets:          stats.Packets,
+			Drops:            stats.Drops,
+			FreezeQueueCount: stats.Freeze_q_cnt,
+		}, nil
+	}
+
+	stats, err := c.r.GetSockoptTpacketStats(unix.SOL_PACKET, unix.PACKET_STATISTICS)
+	if err != nil {
+		return nil, err
+	}
+
+	// FreezeQueueCount only available in V3
+	return &Stats{
+		Packets: stats.Packets,
+		Drops:   stats.Drops,
+	}, nil
+}
+
 func parseTimestamps(cmsg []byte) (SocketTimestamps, error) {
 	msgs, err := unix.ParseSocketControlMessage(cmsg)
 	if err != nil {
@@ -112,20 +133,14 @@ func addrToSockaddr(addr net.Addr, ifIndex int, protocol int) (unix.Sockaddr, er
 }
 
 func Listen(iface *net.Interface, socketType int, socketProtocol int, config *Config) (*Conn, error) {
+	var sender, receiver *socket.Conn
+	var err error
+
 	if err := enableHardwareTimestamping(iface); err != nil {
 		return nil, fmt.Errorf("failed to enable hardware timestamping: %v", err)
 	}
 
-	sender, err := socket.Socket(unix.AF_PACKET, socketType, 0, "fastafpacket_sender", nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create conn: %v", err)
-	}
-
-	if err := enableSocketOptions(sender, iface); err != nil {
-		return nil, fmt.Errorf("failed to enable socket timestamping: %v", err)
-	}
-
-	receiver, err := socket.Socket(unix.AF_PACKET, socketType, 0, "fastafpacket_receiver", nil)
+	receiver, err = socket.Socket(unix.AF_PACKET, socketType, 0, "fastafpacket", nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create conn: %v", err)
 	}
@@ -144,6 +159,19 @@ func Listen(iface *net.Interface, socketType int, socketProtocol int, config *Co
 	err = receiver.Bind(&unix.SockaddrLinklayer{Protocol: htons(uint16(socketProtocol))})
 	if err != nil {
 		return nil, fmt.Errorf("failed to bind: %v", err)
+	}
+
+	sender = receiver
+
+	if config.DualConn {
+		sender, err = socket.Socket(unix.AF_PACKET, socketType, 0, "fastafpacket", nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create conn: %v", err)
+		}
+
+		if err := enableSocketOptions(sender, iface); err != nil {
+			return nil, fmt.Errorf("failed to enable socket timestamping: %v", err)
+		}
 	}
 
 	return &Conn{
