@@ -130,4 +130,4 @@ support hardware timestamping.
 
 ### Authors
 
-fast_afpacket was designed and authored by [Blain Smith](https://github.com/blainsmith) and [Joe williams](https://github.com/joewilliams) at [Subspace](https://subspace.com/).
+fast_afpacket was designed and authored by [Blain Smith](https://github.com/blainsmith) and [Joe williams](https://github.com/joewilliams) at [Subspace](https://subspace.com/) in our high resolution network telemetry system.
